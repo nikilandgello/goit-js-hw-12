@@ -69,6 +69,8 @@ async function searchImages (e) {
             gallery.innerHTML = '';
             loaderHiden();
             hidenMoreLoaderBt();
+            
+            return;
         }
 
         renderGallery(response.hits, gallery);
@@ -109,6 +111,7 @@ async function loadeMoreImages () {
 
             loaderHiden();
             hidenMoreLoaderBt();
+            scrollNewImg();
 
         } else {
             renderGallery(response.hits, gallery);
