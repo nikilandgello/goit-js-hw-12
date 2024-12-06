@@ -61,18 +61,25 @@ async function searchImages (e) {
 
     try {
         page = 1;
-
         const response = await getImages(formData.search, page);
-        if (response.hits.length === 0) {
 
+        if (response.hits.length === 0) {
             showMessage(IZI_MESSEGES.warningNoSearchImages.type, IZI_MESSEGES.warningNoSearchImages.message);
+
             gallery.innerHTML = '';
             loaderHiden();
+            hidenMoreLoaderBt();
         }
+
         renderGallery(response.hits, gallery);
         galleryData.totalHits = response.totalHits;
 
-        showMoreLoaderBtn();
+        if (response.hits.length < perPage) {
+            hidenMoreLoaderBt();
+        } else {
+            showMoreLoaderBtn();
+        };
+
         loaderHiden();
 
     } catch (error) {
@@ -93,20 +100,24 @@ async function loadeMoreImages () {
 
     try {
         const response = await getImages(formData.search, page);
-        const imagesLoaded = page * perPage;
+        const imagesLoaded = (page - 1) * perPage + response.hits.length;
 
         if (imagesLoaded >= galleryData.totalHits) {
+            renderGallery(response.hits, gallery);
+
             showMessage(IZI_MESSEGES.warningNoImagesBtn.type, IZI_MESSEGES.warningNoImagesBtn.message);
 
             loaderHiden();
             hidenMoreLoaderBt();
+
         } else {
             renderGallery(response.hits, gallery);
+
             showMoreLoaderBtn();
+            loaderHiden();
 
             scrollNewImg();
-        };
-        loaderHiden();
+        }
     } catch (error) {
         showMessage(IZI_MESSEGES.error.type, IZI_MESSEGES.error.message);
 
